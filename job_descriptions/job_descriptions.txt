@@ -1,0 +1,19 @@
+Software Development Engineer
+
+Required Skills:
+Python
+SQL
+Git
+HTML
+CSS
+JavaScript
+Flask
+REST API
+Docker
+AWS
+
+Education:
+Bachelor's Degree
+
+Experience:
+0-2 Years
