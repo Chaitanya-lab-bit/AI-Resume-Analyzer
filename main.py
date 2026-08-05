@@ -9,8 +9,8 @@ from analyzer import (
 from report import generate_report
 
 # File paths
-resume_path = "resumes/resume.pdf"
-job_path = "job_descriptions/job_descriptions.txt"
+resume_path = input("Enter Resume PDF path: ")
+job_path = input("Enter Job Description path: ")
 
 # Read files
 resume_text = read_resume(resume_path)
