@@ -8,72 +8,110 @@ from analyzer import (
 )
 from report import generate_report
 
-# File paths
-resume_path = input("Enter Resume PDF path: ")
-job_path = input("Enter Job Description path: ")
+from tkinter import Tk
+from tkinter.filedialog import askopenfilename
 
-# Read files
+# -------------------------------
+# Select Resume PDF
+# -------------------------------
+Tk().withdraw()
+
+print("Select Resume PDF")
+
+resume_path = askopenfilename(
+    title="Select Resume PDF",
+    filetypes=[("PDF Files", "*.pdf")]
+)
+
+# Check if no file selected
+if not resume_path:
+    print("No resume selected.")
+    exit()
+
+# -------------------------------
+# Job Description File
+# -------------------------------
+job_path = "job_descriptions/job_descriptions.txt"
+
+# -------------------------------
+# Read Files
+# -------------------------------
 resume_text = read_resume(resume_path)
 job_text = read_job_description(job_path)
 
-# Check if files are read successfully
 if resume_text is None or job_text is None:
     print("Error reading files.")
     exit()
 
-# Extract candidate details
+# -------------------------------
+# Extract Candidate Details
+# -------------------------------
 name, email, phone = extract_details(resume_text)
 
-# Extract skills
+# -------------------------------
+# Extract Skills
+# -------------------------------
 resume_skills = extract_skills(resume_text)
 jd_skills = extract_skills(job_text)
 
-# Compare skills
+# -------------------------------
+# Compare Skills
+# -------------------------------
 matched, missing = compare_skills(resume_skills, jd_skills)
 
-# Calculate ATS score
+# -------------------------------
+# ATS Score
+# -------------------------------
 ats_score = calculate_ats(matched, len(jd_skills))
 
-# Resume rating
+# -------------------------------
+# Rating & Recommendations
+# -------------------------------
 rating = resume_rating(ats_score)
-
-# Recommendations
 recommendations = get_recommendations(missing)
 
+# -------------------------------
 # Display Results
+# -------------------------------
 print("\n========== AI RESUME ANALYZER ==========\n")
 
 print("Candidate Details")
-print("-----------------------------")
+print("----------------------------")
 print("Name :", name)
 print("Email:", email)
 print("Phone:", phone)
 
 print("\nResume Skills")
-print("-----------------------------")
-print(resume_skills)
+print("----------------------------")
+for skill in resume_skills:
+    print("✔", skill)
 
 print("\nJob Description Skills")
-print("-----------------------------")
-print(jd_skills)
+print("----------------------------")
+for skill in jd_skills:
+    print("✔", skill)
 
 print("\nMatched Skills")
-print("-----------------------------")
-print(matched)
+print("----------------------------")
+for skill in matched:
+    print("✔", skill)
 
 print("\nMissing Skills")
-print("-----------------------------")
-print(missing)
+print("----------------------------")
+for skill in missing:
+    print("✘", skill)
 
 print(f"\nATS Score : {ats_score}%")
 print("Resume Rating :", rating)
 
 print("\nRecommendations")
-print("-----------------------------")
+print("----------------------------")
 for rec in recommendations:
     print("•", rec)
 
+# -------------------------------
 # Generate PDF Report
+# -------------------------------
 generate_report(
     name,
     ats_score,
@@ -83,5 +121,5 @@ generate_report(
     recommendations
 )
 
-print("\n✅ PDF Report Generated Successfully!")
-print("Saved in: reports/ATS_Report.pdf")
+print("\nPDF Report Generated Successfully!")
+print("Saved in reports/ATS_Report.pdf")
