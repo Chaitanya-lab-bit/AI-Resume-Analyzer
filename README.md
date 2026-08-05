@@ -47,3 +47,21 @@ python main.py
 - NLP-based keyword extraction
 - Web interface using Flask
 - Multiple resume comparison
+
+## Project Screenshots
+
+### Console Output
+
+![Console Output](screenshotsats_report(2).png)
+
+---
+
+### ATS Report
+
+![ATS Report](screenshotsats_report.png)
+
+---
+
+### Resume File Picker
+
+![File Picker](screenshotsfile_picker.png)
