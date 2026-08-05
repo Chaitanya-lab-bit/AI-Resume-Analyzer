@@ -49,19 +49,20 @@ python main.py
 - Multiple resume comparison
 
 ## Project Screenshots
+## Project Screenshots
 
 ### Console Output
 
-![Console Output](screenshotsats_report(2).png)
+![Console Output](screenshots/console_output.png)
 
 ---
 
 ### ATS Report
 
-![ATS Report](screenshotsats_report.png)
+![ATS Report](screenshots/ats_report.png)
 
 ---
 
 ### Resume File Picker
 
-![File Picker](screenshotsfile_picker.png)
+![File Picker](screenshots/file_picker.png)
