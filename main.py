@@ -1,19 +1,20 @@
-from parser import read_resume, read_job_description, extract_details
-from analyzer import (
-    extract_skills,
-    compare_skills,
-    calculate_ats,
-    resume_rating,
-    get_recommendations
-)
+from parser import ResumeParser
+from analyzer import ResumeAnalyzer
 from report import generate_report
+from resume import Resume
 
 from tkinter import Tk
 from tkinter.filedialog import askopenfilename
 
-# -------------------------------
+# -------------------------
+# Create Objects
+# -------------------------
+parser = ResumeParser()
+analyzer = ResumeAnalyzer()
+
+# -------------------------
 # Select Resume PDF
-# -------------------------------
+# -------------------------
 Tk().withdraw()
 
 print("Select Resume PDF")
@@ -23,95 +24,91 @@ resume_path = askopenfilename(
     filetypes=[("PDF Files", "*.pdf")]
 )
 
-# Check if no file selected
 if not resume_path:
-    print("No resume selected.")
+    print("No Resume Selected.")
     exit()
 
-# -------------------------------
+# -------------------------
 # Job Description File
-# -------------------------------
+# -------------------------
 job_path = "job_descriptions/job_descriptions.txt"
 
-# -------------------------------
+# -------------------------
 # Read Files
-# -------------------------------
-resume_text = read_resume(resume_path)
-job_text = read_job_description(job_path)
+# -------------------------
+resume_text = parser.read_resume(resume_path)
+job_text = parser.read_job_description(job_path)
 
 if resume_text is None or job_text is None:
     print("Error reading files.")
     exit()
 
-# -------------------------------
+# -------------------------
 # Extract Candidate Details
-# -------------------------------
-name, email, phone = extract_details(resume_text)
+# -------------------------
+name, email, phone = parser.extract_details(resume_text)
 
-# -------------------------------
+# -------------------------
+# OOP Object
+# -------------------------
+candidate = Resume(name, email, phone)
+candidate.display()
+
+# -------------------------
 # Extract Skills
-# -------------------------------
-resume_skills = extract_skills(resume_text)
-jd_skills = extract_skills(job_text)
+# -------------------------
+resume_skills = analyzer.extract_skills(resume_text)
+jd_skills = analyzer.extract_skills(job_text)
 
-# -------------------------------
+# -------------------------
 # Compare Skills
-# -------------------------------
-matched, missing = compare_skills(resume_skills, jd_skills)
+# -------------------------
+matched, missing = analyzer.compare_skills(
+    resume_skills,
+    jd_skills
+)
 
-# -------------------------------
+# -------------------------
 # ATS Score
-# -------------------------------
-ats_score = calculate_ats(matched, len(jd_skills))
+# -------------------------
+ats_score = analyzer.calculate_ats(
+    matched,
+    len(jd_skills)
+)
 
-# -------------------------------
-# Rating & Recommendations
-# -------------------------------
-rating = resume_rating(ats_score)
-recommendations = get_recommendations(missing)
+# -------------------------
+# Resume Rating
+# -------------------------
+rating = analyzer.resume_rating(ats_score)
 
-# -------------------------------
+# -------------------------
+# Recommendations
+# -------------------------
+recommendations = analyzer.get_recommendations(missing)
+
+# -------------------------
 # Display Results
-# -------------------------------
+# -------------------------
 print("\n========== AI RESUME ANALYZER ==========\n")
 
-print("Candidate Details")
-print("----------------------------")
-print("Name :", name)
-print("Email:", email)
-print("Phone:", phone)
-
-print("\nResume Skills")
-print("----------------------------")
-for skill in resume_skills:
-    print("✔", skill)
-
-print("\nJob Description Skills")
-print("----------------------------")
-for skill in jd_skills:
-    print("✔", skill)
-
-print("\nMatched Skills")
-print("----------------------------")
+print("Matched Skills:")
 for skill in matched:
     print("✔", skill)
 
-print("\nMissing Skills")
-print("----------------------------")
+print("\nMissing Skills:")
 for skill in missing:
     print("✘", skill)
 
 print(f"\nATS Score : {ats_score}%")
 print("Resume Rating :", rating)
 
-print("\nRecommendations")
-print("----------------------------")
+print("\nRecommendations:")
 for rec in recommendations:
     print("•", rec)
 
-# -------------------------------
-# Generate PDF Report
-# -------------------------------
+# -------------------------
+# Generate PDF
+# -------------------------
 generate_report(
     name,
     ats_score,
@@ -121,5 +118,4 @@ generate_report(
     recommendations
 )
 
-print("\nPDF Report Generated Successfully!")
-print("Saved in reports/ATS_Report.pdf")
+print("\nReport saved successfully in reports/ATS_Report.pdf")

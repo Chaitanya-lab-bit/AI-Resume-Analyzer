@@ -1,49 +1,60 @@
-from PyPDF2 import PdfReader
-
-def read_resume(pdf_path):
-    try:
-        reader = PdfReader(pdf_path)
-
-        text = ""
-        for page in reader.pages:
-            page_text = page.extract_text()
-            if page_text:
-                text += page_text + "\n"
-
-        return text
-
-    except Exception as e:
-        print("Error:", e)
-        return None
-    
-def read_job_description(file_path):
-    try:
-        with open(file_path, "r", encoding="utf-8") as file:
-            return file.read()
-
-    except Exception as e:
-        print("Error:", e)
-        return None
+import pdfplumber
 import re
 
-def extract_details(text):
 
-    # Email
-    email = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
-    email = email.group() if email else "Not Found"
+class ResumeParser:
 
-    # Phone Number
-    phone = re.search(r'(\+91\s?)?[6-9]\d{9}', text)
-    phone = phone.group() if phone else "Not Found"
+    def __init__(self):
+        pass
 
-    # Name (First line of resume)
-    lines = text.split("\n")
+    # Read Resume PDF
+    def read_resume(self, pdf_path):
 
-    name = "Not Found"
+        try:
+            text = ""
 
-    for line in lines:
-        if line.strip():
-            name = line.strip()
-            break
+            with pdfplumber.open(pdf_path) as pdf:
 
-    return name, email, phone
+                for page in pdf.pages:
+                    page_text = page.extract_text()
+
+                    if page_text:
+                        text += page_text + "\n"
+
+            return text
+
+        except Exception as e:
+            print("Error:", e)
+            return None
+
+    # Read Job Description Text File
+    def read_job_description(self, file_path):
+
+        try:
+            with open(file_path, "r", encoding="utf-8") as file:
+                return file.read()
+
+        except Exception as e:
+            print("Error:", e)
+            return None
+
+    # Extract Name, Email and Phone
+    def extract_details(self, text):
+
+        # Email
+        email_match = re.search(r'[\w\.-]+@[\w\.-]+\.\w+', text)
+        email = email_match.group() if email_match else "Not Found"
+
+        # Phone
+        phone_match = re.search(r'(\+91\s?)?[6-9]\d{9}', text)
+        phone = phone_match.group() if phone_match else "Not Found"
+
+        # Name (First non-empty line)
+        name = "Not Found"
+
+        for line in text.split("\n"):
+            if line.strip():
+                name = line.strip()
+                break
+
+        return name, email, phone
